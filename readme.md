@@ -11,3 +11,5 @@ Please note that the module numbers may change in different years when SISBID is
 - SISBID Pre-Recorded Video 3: [R Lab 2](https://washington.zoom.us/rec/share/6fNkD5-s3G1LSa-V8UXYaKQOPLvlT6a81XBPq_VbnkzIQG6WhHD8CrMVuk4gzL5v?startTime=1594516472000)
 
 - SISBID Pre-Recorded Video 4: [Batch Effects](https://washington.zoom.us/rec/share/-tMvP4nZ-DxLc4322BuGHb4DO5n4aaa81iNP_vFemR6XWMVVHC3izmAiKwjseZQ1?startTime=1594597919000)
+
+Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. 
