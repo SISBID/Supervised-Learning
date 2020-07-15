@@ -13,3 +13,11 @@ Please note that the module numbers may change in different years when SISBID is
 - SISBID Pre-Recorded Video 4: [Batch Effects](https://washington.zoom.us/rec/share/-tMvP4nZ-DxLc4322BuGHb4DO5n4aaa81iNP_vFemR6XWMVVHC3izmAiKwjseZQ1?startTime=1594597919000)
 
 Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. 
+
+
+## Videos from Live Lectures
+
+Here are the videos from live lectures:
+
+1. Lecture 1 (Wednesday July 15th, 11:30am-2:30pm PT): [Introduction+Regression](https://washington.zoom.us/rec/share/5Nd0AaHg2TpLZ6eT2UXES6x-AKbdX6a81HMbqfYKmRmDMDIIdPWnlFSZcD7ZoTEw?startTime=1594836612000)
+
