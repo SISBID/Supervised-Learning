@@ -20,6 +20,7 @@ Finally, here are two more pre-recorded lectures:
 
 - SISBID Pre-Recorded Video 5,6: [slides 6 and 8](https://www.dropbox.com/sh/v5fyl8kks0nb1zv/AACGcFXHpHa8F_dPPKh9oUlUa?dl=0)
 
+We will cover the material from these last two videos during the last day of the module, depending on how much time is left.
 
 ## Videos from Live Lectures
 
