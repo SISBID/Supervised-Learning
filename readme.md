@@ -16,7 +16,7 @@ Please note that the module numbers may change in different years when SISBID is
 
 Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. You can watch the video 4, on batch effects, at any point -- we wil briefly go over the topic after the lecture on classification, but will not discuss it extensively. 
 
-Finally, here are two more pre-recorded lectures: 
+Finally, here are two more pre-recorded lectures (same password as before): 
 
 - SISBID Pre-Recorded Video 5,6: [slides 6 and 8](https://www.dropbox.com/sh/v5fyl8kks0nb1zv/AACGcFXHpHa8F_dPPKh9oUlUa?dl=0)
 
