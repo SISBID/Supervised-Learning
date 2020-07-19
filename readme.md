@@ -30,3 +30,4 @@ Here are the videos from live lectures (password required):
 
 2. Day 2 (Thursday July 16th, 8am-2:30pm PT): [Regression+Classification](https://washington.zoom.us/rec/share/xu14EZfX3TNLa4nT-lDFAv46G777aaa82ndI-fUOmUk2qyLz6WEDvMSQubUPZQ-C?startTime=1594910697000)
 
+3. Day 3 Friday, July 17th, 8am-2:30pm PT): [Trees+Deep Learning](https://washington.zoom.us/rec/share/yZRRFLLx1H9IT6vH8EXRc4INIb_4aaa81SIf_qEEzEc-Wydv7e7Whb1PWIAhrJ5M)
