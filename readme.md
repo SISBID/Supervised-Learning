@@ -6,13 +6,13 @@ Please note that the module numbers may change in different years when SISBID is
 
 We have pre-recorded some of the lectures. Links to these *pre-recorded lectures* are given below (the password for accessing these files will be sent to participants separately):
 
-- SISBID Pre-Recorded Video 1: [Introduction](https://washington.zoom.us/rec/share/2fduFoPc-0dIb43G7x_CarItRIP_X6a803UX-_IFxU9OBx3RGrp2LsOCtsbn2oYO?startTime=1594352701000)
+- SISBID Pre-Recorded Video 1: [Introduction](https://www.dropbox.com/s/tcshtpmcbyfjlm3/SISBID2020_Video1_Intro_Ali.zip?dl=0)
 
-- SISBID Pre-Recorded Video 2: [R Lab 1](https://washington.zoom.us/rec/share/-p1tbOnp-j9ObrfiskvZUJ4GB7Tveaa8hyVP8vIMzU6X2BWS5itHYHfVZagggBZi?startTime=1594513479000)
+- SISBID Pre-Recorded Video 2: [R Lab 1](https://www.dropbox.com/s/og8f8fqzxshbzmc/SISBID2020_Video2_Rlab1_Ali.zip?dl=0)
 
-- SISBID Pre-Recorded Video 3: [R Lab 2](https://washington.zoom.us/rec/share/6fNkD5-s3G1LSa-V8UXYaKQOPLvlT6a81XBPq_VbnkzIQG6WhHD8CrMVuk4gzL5v?startTime=1594516472000)
+- SISBID Pre-Recorded Video 3: [R Lab 2](https://www.dropbox.com/s/49q1i8u9qc8mk6n/SISBID2020_Video3_Rlab2_Ali.zip?dl=0)
 
-- SISBID Pre-Recorded Video 4: [Batch Effects](https://washington.zoom.us/rec/share/-tMvP4nZ-DxLc4322BuGHb4DO5n4aaa81iNP_vFemR6XWMVVHC3izmAiKwjseZQ1?startTime=1594597919000)
+- SISBID Pre-Recorded Video 4: [Batch Effects](https://www.dropbox.com/s/nd00j9k8oodtiyd/SISBID2020_Video4_BatchEffects_Ali.zip?dl=0)
 
 Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. You can watch video 4, on batch effects, at any point -- we wil briefly go over the topic after the lecture on classification, but will not discuss it extensively. 
 
