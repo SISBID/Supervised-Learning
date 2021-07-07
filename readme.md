@@ -4,7 +4,7 @@ Please note that the module numbers may change in different years when SISBID is
 
 ## Pre-Recorded Lectures
 
-**For 2020**, we have pre-recorded a few lectures. Links to these *pre-recorded lectures* are given below (the password for accessing these files will be sent to participants separately):
+We have pre-recorded some of the lectures. Links to these *pre-recorded lectures* are given below (the password for accessing these files will be sent to participants separately):
 
 - SISBID Pre-Recorded Video 1: [Introduction](https://washington.zoom.us/rec/share/2fduFoPc-0dIb43G7x_CarItRIP_X6a803UX-_IFxU9OBx3RGrp2LsOCtsbn2oYO?startTime=1594352701000)
 
@@ -14,7 +14,7 @@ Please note that the module numbers may change in different years when SISBID is
 
 - SISBID Pre-Recorded Video 4: [Batch Effects](https://washington.zoom.us/rec/share/-tMvP4nZ-DxLc4322BuGHb4DO5n4aaa81iNP_vFemR6XWMVVHC3izmAiKwjseZQ1?startTime=1594597919000)
 
-Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. You can watch the video 4, on batch effects, at any point -- we wil briefly go over the topic after the lecture on classification, but will not discuss it extensively. 
+Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. You can watch video 4, on batch effects, at any point -- we wil briefly go over the topic after the lecture on classification, but will not discuss it extensively. 
 
 Finally, here are two more pre-recorded lectures (same password as before): 
 
