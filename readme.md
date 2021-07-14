@@ -26,7 +26,7 @@ We will cover the material from these last two videos during the last day of the
 
 Here are the videos from live lectures (password required): 
 
-1. Day 1 (Wednesday July 14th, 11:30am-2:30pm PT): [Introduction+Regression](https://)
+1. Day 1 (Wednesday July 14th, 11:30am-2:30pm PT): [Introduction+Regression](https://washington.zoom.us/rec/share/OyD7OE9nH_3sRZJ7z92_1NlyMqW5CRLx-wpFdbHcinAx6Vt0Q3-s4k8rHTzAXfLc.kDnwn4myDwpNa8iA)
 
 2. Day 2 (Thursday July 15th, 8am-2:30pm PT): [Regression+Classification](https://)
 
