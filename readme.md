@@ -22,7 +22,7 @@ Finally, here are two more pre-recorded lectures (same password as before):
 
 We will cover the material from these last two videos during the last day of the module, depending on how much time is left.
 
-## Videos from Live Lectures (_to be added shortly after each lecture_)
+## Videos from Live Lectures
 
 Here are the videos from live lectures (password required): 
 
