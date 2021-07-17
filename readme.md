@@ -16,7 +16,7 @@ We have pre-recorded some of the lectures. Links to these *pre-recorded lectures
 
 Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) before the first class. You can watch video 4, on batch effects, at any point -- we wil briefly go over the topic after the lecture on classification, but will not discuss it extensively. 
 
-Finally, here are two more pre-recorded lectures (same password as before): 
+Finally, here are two more pre-recorded lectures (password for accessing these files will be sent to participants separately): 
 
 - SISBID Pre-Recorded Video 5,6: [slides 6 and 8](https://www.dropbox.com/sh/1c0xhprwxp6up2m/AADB04YYC72zaNiwRLTif4MAa?dl=0)
 
