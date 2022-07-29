@@ -20,14 +20,14 @@ Finally, here are two more pre-recorded lectures (password for accessing these f
 
 - SISBID Pre-Recorded Video 5,6: [slides 6 and 8](https://www.dropbox.com/sh/1c0xhprwxp6up2m/AADB04YYC72zaNiwRLTif4MAa?dl=0)
 
-We will cover the material from these last two videos during the last day of the module, depending on how much time is left.
+We will try to cover the material from these last two videos during the last day of the module, depending on how much time is left, but you will have access to them if we run out of time. 
 
 ## Videos from Live Lectures
 
 Here are the videos from live lectures (password required): 
 
-1. Day 1 (Wednesday July 14th, 11:30am-2:30pm PT): [Introduction+Regression](https://washington.zoom.us/rec/share/OyD7OE9nH_3sRZJ7z92_1NlyMqW5CRLx-wpFdbHcinAx6Vt0Q3-s4k8rHTzAXfLc.kDnwn4myDwpNa8iA)
+1. Day 1 (Monday Aug 1st, 8am-2:30pm PT): [Regression+Classification](TO-BE-ADDED-AFTER-CLASS)
 
-2. Day 2 (Thursday July 15th, 8am-2:30pm PT): [Regression+Classification](https://washington.zoom.us/rec/share/EKmSDevmvy1Aw7thX9ovMa5omdAhqLOzKQgTLBViZgEw_5YyetUFws6UrWl04giK.2OgVS6rBgqS4nnNO)
+2. Day 2 (Tuesday Aug 2nd, 8am-2:30pm PT): [Classification+Tree-Based Methods](TO-BE-ADDED-AFTER-CLASS)
 
-3. Day 3 (Friday July 16th, 8am-2:30pm PT): [Tree-Based Methods+Deep Neural Nets](https://washington.zoom.us/rec/share/UGiexN2Wshy8pKwoMwxKbBjNoMUN_ubCqfU9fUAke8dU0oP246Zw2bMC3trC-j3R.4NV_2i-wEqv5KOiR)
+3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](TO-BE-ADDED-AFTER-CLASS)
