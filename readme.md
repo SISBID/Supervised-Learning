@@ -30,4 +30,4 @@ Here are the videos from live lectures (password required):
 
 2. Day 2 (Tuesday Aug 2nd, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://washington.zoom.us/rec/share/keWCf5a3gWiSJVzoih4Tjir5VCg9xEvvUiLomDJd-23RfXW4oUIUhII7uBvp20u2.tKiGbRe-zXLAGSWO)
 
-3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](TO-BE-ADDED-AFTER-CLASS)
+3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](https://washington.zoom.us/rec/share/SNf_7bZ7EMI7fUTIF1tg_MOIi1EoeT9RuD3xBUEhxCexzPNgrn2ghN2BCxhbpChV.aqO0xUUTikTHJN0r)
