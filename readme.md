@@ -18,7 +18,7 @@ Please watch videos 1-3 (all related to the first set of slides, SISBID1.pdf) be
 
 Finally, here are two more pre-recorded lectures (password for accessing these files will be sent to participants separately): 
 
-- SISBID Pre-Recorded Video 5: [slide set 6]([https://www.dropbox.com/sh/1c0xhprwxp6up2m/AADB04YYC72zaNiwRLTif4MAa?dl=0](https://www.dropbox.com/sh/4lsie7clnkgfz8m/AADSwFRNAXIzsyEUPHbl1Cqra?dl=0))
+- SISBID Pre-Recorded Video 5: [slide set 6](https://www.dropbox.com/sh/4lsie7clnkgfz8m/AADSwFRNAXIzsyEUPHbl1Cqra?dl=0)
 
 We will try to cover the material from these last two videos during the last day of the module, depending on how much time is left, but you will have access to them if we run out of time. 
 
