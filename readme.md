@@ -27,6 +27,6 @@ Here are the videos from live lectures (password required):
 
 1. Day 1 (Monday July 31st, 8am-2:30pm PT): [Regression+Classification](https://)
 
-2. Day 2 (Tuesday Aug 2nd, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://)
+2. Day 2 (Tuesday Aug 1st, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://)
 
-3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](https://)
+3. Day 3 (Wednesday Aug 2nd, 8am-11:30am PT): [Deep Neural Nets](https://)
