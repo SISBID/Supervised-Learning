@@ -25,8 +25,8 @@ Finally, here is one more pre-recorded lecture:
 
 Here are the videos from live lectures (password required): 
 
-1. Day 1 (Monday Aug 1st, 8am-2:30pm PT): [Regression+Classification](https://washington.zoom.us/rec/share/a87QctqMni8Q9TNIMI2tvo6upWBtymrWo7KKopavBiPtCOJE1OGBg2-LqFeV6-5z.ALdiXrq_ml2gwGH1)
+1. Day 1 (Monday July 31st, 8am-2:30pm PT): [Regression+Classification](https://)
 
-2. Day 2 (Tuesday Aug 2nd, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://washington.zoom.us/rec/share/keWCf5a3gWiSJVzoih4Tjir5VCg9xEvvUiLomDJd-23RfXW4oUIUhII7uBvp20u2.tKiGbRe-zXLAGSWO)
+2. Day 2 (Tuesday Aug 2nd, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://)
 
-3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](https://washington.zoom.us/rec/share/SNf_7bZ7EMI7fUTIF1tg_MOIi1EoeT9RuD3xBUEhxCexzPNgrn2ghN2BCxhbpChV.aqO0xUUTikTHJN0r)
+3. Day 3 (Wednesday Aug 3rd, 8am-11:30am PT): [Deep Neural Nets](https://)
