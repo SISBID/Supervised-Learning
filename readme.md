@@ -25,7 +25,7 @@ Finally, here is one more pre-recorded lecture:
 
 Here are the videos from live lectures (password required): 
 
-1. Day 1 (Monday July 31st, 8am-2:30pm PT): [Regression+Classification](https://)
+1. Day 1 (Monday July 31st, 8am-2:30pm PT): [Regression+Classification](https://washington.zoom.us/rec/share/KvBqqxB3OWKgj7EG_LRwDpys8aYyCgjaZk0Rn3zZIWZAedagSSPAov98R-hooojg.r8Y90U61ANl3nw3c)
 
 2. Day 2 (Tuesday Aug 1st, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://)
 
