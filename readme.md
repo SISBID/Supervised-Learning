@@ -20,6 +20,7 @@ Finally, here is one more pre-recorded lecture:
 
 - SISBID Pre-Recorded Video 5: [slide set 6](https://www.dropbox.com/sh/4lsie7clnkgfz8m/AADSwFRNAXIzsyEUPHbl1Cqra?dl=0) (methods for other data types)
 
+We will be using the mnist data for some demos. This data set is too large to post on GitHub, but can be downloaded [here](https://www.dropbox.com/scl/fo/k5ebwrenzpa8i3lw2y274/h?rlkey=goqypkbb4vaehj13ml1d5jt6d&dl=0). 
 
 ## Videos from Live Lectures
 
@@ -29,4 +30,4 @@ Here are the videos from live lectures (password required):
 
 2. Day 2 (Tuesday Aug 1st, 8am-2:30pm PT): [Classification+Tree-Based Methods](https://washington.zoom.us/rec/share/oKMsDs9uu9x2Dp5Q8PQq3VvRiHwPLGYj7lwO7Eh30aG5dj7K5qow7LF-p3CoC972.4vrxgC2RdXwS4AAV)
 
-3. Day 3 (Wednesday Aug 2nd, 8am-11:30am PT): [Deep Neural Nets](https://)
+3. Day 3 (Wednesday Aug 2nd, 8am-11:30am PT): [Deep Neural Nets](https://washington.zoom.us/rec/share/J_hq5t501mE1DZ6HHMv--hVCpsTsI_jErEe16BCWHG-NtgTcrFnFopXuGmq6rpyH.TFtj6PhhDJUMAcUk)
