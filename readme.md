@@ -20,8 +20,6 @@ Finally, here is one more pre-recorded lecture:
 
 - SISBID Pre-Recorded Video 5: [slide set 6](https://www.dropbox.com/sh/4lsie7clnkgfz8m/AADSwFRNAXIzsyEUPHbl1Cqra?dl=0) (methods for other data types)
 
-We will be using the mnist data for for deep neural net demos. This data set is too large to post on GitHub, but can be downloaded [here](https://www.dropbox.com/scl/fo/k5ebwrenzpa8i3lw2y274/h?rlkey=goqypkbb4vaehj13ml1d5jt6d&dl=0). 
-
 ## Videos from Live Lectures
 
 Here are the videos from live lectures (password required): 
