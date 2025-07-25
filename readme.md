@@ -22,10 +22,10 @@ Finally, here is one more pre-recorded lecture:
 
 ## Videos from Live Lectures
 
-Here are the videos from live lectures (password required): 
+Here are the videos from live lectures, which will be available after the end of each lecture (password required): 
 
-1. Day 1 (Monday Aug 19th, 8am-2:30pm PT): [Regression+Classification](TOBEADDEDAFTERCLASS)
+1. Day 1 (Monday Aug 19th, 8am-2:30pm PT): [Regression+Classification]
 
-2. Day 2 (Tuesday Aug 20th, 8am-2:30pm PT): [Classification+Tree-Based Methods](TOBEADDEDAFTERCLASS)
+2. Day 2 (Tuesday Aug 20th, 8am-2:30pm PT): [Classification+Tree-Based Methods]
 
-3. Day 3 (Wednesday Aug 21st, 8am-11:30am PT): [Deep Neural Nets](TOBEADDEDAFTERCLASS)
+3. Day 3 (Wednesday Aug 21st, 8am-11:30am PT): [Deep Neural Nets]
