@@ -1,0 +1,631 @@
+---
+title: "SISBID: Causal Inference with Machine Learning"
+subtitle: "R version"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5,
+  fig.align = "center"
+)
+
+set.seed(42)
+
+library(ggplot2)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+# Average Treatment Effect Estimation
+
+For unit \(i\), let
+
+- \(Y_i^{(1)}\) be the potential outcome under treatment;
+- \(Y_i^{(0)}\) be the potential outcome under control;
+- \(T_i \in \{0,1\}\) be the treatment indicator.
+
+The average treatment effect is
+
+\[
+\tau = \mathbb{E}\left[Y_i^{(1)} - Y_i^{(0)}\right].
+\]
+
+For each unit, we observe only one potential outcome:
+
+\[
+Y_i = T_iY_i^{(1)} + (1-T_i)Y_i^{(0)}.
+\]
+
+# Randomized Treatment
+
+We first consider randomized treatment assignment, so that
+
+\[
+\left(Y_i^{(1)},Y_i^{(0)}\right) \perp T_i.
+\]
+
+```{r randomized-data}
+n_randomized <- 500
+
+# Randomly assign treatment
+randomized_t <- rbinom(
+  n = n_randomized,
+  size = 1,
+  prob = 0.5
+)
+
+# True treatment effect
+randomized_tau <- 4
+
+# Observed outcome
+randomized_y <- randomized_tau * randomized_t +
+  rnorm(n_randomized)
+
+randomized_data <- data.frame(
+  unit = seq_len(n_randomized),
+  t = factor(randomized_t, levels = c(0, 1)),
+  y = randomized_y
+)
+```
+
+```{r randomized-plot}
+ggplot(
+  randomized_data,
+  aes(x = unit, y = y, color = t)
+) +
+  geom_point(alpha = 0.75) +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  geom_hline(
+    yintercept = randomized_tau,
+    linetype = "dashed",
+    color = "blue"
+  ) +
+  scale_color_manual(
+    values = c("0" = "red", "1" = "blue"),
+    labels = c("Control", "Treatment")
+  ) +
+  labs(
+    x = "Unit",
+    y = "Outcome",
+    color = "Group",
+    title = "Outcomes under randomized treatment"
+  )
+```
+
+Under random assignment,
+
+\[
+\mathbb{E}[Y_i \mid T_i=1]
+-
+\mathbb{E}[Y_i \mid T_i=0]
+=
+\mathbb{E}[Y_i^{(1)}-Y_i^{(0)}].
+\]
+
+Thus, the ATE can be estimated using the difference in sample means.
+
+```{r randomized-difference-means}
+randomized_difference_ate <- 
+  mean(randomized_y[randomized_t == 1]) -
+  mean(randomized_y[randomized_t == 0])
+
+randomized_difference_ate
+```
+
+The same estimate is the coefficient of \(T\) in a linear regression with an intercept.
+
+```{r randomized-regression}
+randomized_model <- lm(
+  randomized_y ~ randomized_t
+)
+
+randomized_regression_ate <- 
+  coef(randomized_model)[["randomized_t"]]
+
+coef(randomized_model)
+summary(randomized_model)
+```
+
+# Observed Confounder
+
+Suppose \(X\) affects both treatment assignment and the outcome. If the outcome model is linear, we may estimate the treatment effect using
+
+\[
+Y_i = \alpha + \beta X_i + \tau T_i + \varepsilon_i.
+\]
+
+```{r confounder-data}
+n_confounder <- 500
+
+confounder_x <- runif(
+  n_confounder,
+  min = -3,
+  max = 3
+)
+
+# Treatment is determined by X
+confounder_t <- as.integer(confounder_x < 0)
+
+confounder_tau <- 4
+
+confounder_y <- confounder_x +
+  confounder_tau * confounder_t +
+  rnorm(n_confounder)
+
+confounded_data <- data.frame(
+  x = confounder_x,
+  t = factor(confounder_t, levels = c(0, 1)),
+  y = confounder_y
+)
+```
+
+```{r confounder-plot}
+confounder_line_data <- data.frame(
+  x = rep(
+    seq(-3, 3, length.out = 200),
+    2
+  ),
+  t = factor(
+    rep(c(0, 1), each = 200),
+    levels = c(0, 1)
+  )
+)
+
+confounder_line_data$mean_y <- 
+  confounder_line_data$x +
+  confounder_tau *
+    as.numeric(
+      as.character(confounder_line_data$t)
+    )
+
+ggplot(
+  confounded_data,
+  aes(x = x, y = y, color = t)
+) +
+  geom_point(alpha = 0.7) +
+  geom_line(
+    data = confounder_line_data,
+    aes(x = x, y = mean_y, color = t),
+    linewidth = 1
+  ) +
+  scale_color_manual(
+    values = c("0" = "red", "1" = "blue"),
+    labels = c("Control", "Treatment")
+  ) +
+  labs(
+    x = "Confounder X",
+    y = "Outcome Y",
+    color = "Group",
+    title = "Treatment assignment depends on X"
+  )
+```
+
+If we fail to adjust for \(X\), the difference in means is biased.
+
+```{r confounder-unadjusted}
+confounder_unadjusted_ate <- 
+  mean(confounder_y[confounder_t == 1]) -
+  mean(confounder_y[confounder_t == 0])
+
+confounder_unadjusted_ate
+```
+
+Adjusting for \(X\) using linear regression recovers the treatment effect.
+
+```{r confounder-adjusted}
+adjusted_model <- lm(
+  confounder_y ~ confounder_t + confounder_x
+)
+
+adjusted_ate <- 
+  coef(adjusted_model)[["confounder_t"]]
+
+coef(adjusted_model)
+summary(adjusted_model)
+adjusted_ate
+```
+
+## Frisch--Waugh--Lovell Residualization
+
+The coefficient of \(T\) in the regression of \(Y\) on \(T\) and \(X\) can also be obtained by:
+
+1. residualizing \(Y\) with respect to \(X\);
+2. residualizing \(T\) with respect to \(X\);
+3. regressing the residualized outcome on the residualized treatment.
+
+```{r fwl}
+outcome_residual <- resid(
+  lm(confounder_y ~ confounder_x)
+)
+
+treatment_residual <- resid(
+  lm(confounder_t ~ confounder_x)
+)
+
+fwl_model <- lm(
+  outcome_residual ~ 0 + treatment_residual
+)
+
+fwl_ate <- 
+  coef(fwl_model)[["treatment_residual"]]
+
+coef(fwl_model)
+
+c(
+  regression_adjustment = adjusted_ate,
+  FWL_residualization = fwl_ate
+)
+```
+
+# Propensity Score
+
+The propensity score is
+
+\[
+q(X_i)=\Pr(T_i=1\mid X_i).
+\]
+
+Inverse probability weighting can identify the ATE when treatment is conditionally independent of the potential outcomes given \(X\), and when overlap holds:
+
+\[
+0 < q(X_i) < 1.
+\]
+
+## Simulate Data with Overlap
+
+```{r propensity-data}
+n_propensity <- 500
+
+propensity_x <- runif(
+  n_propensity,
+  min = -3,
+  max = 3
+)
+
+# True propensity score
+true_propensity <- plogis(propensity_x)
+
+propensity_t <- rbinom(
+  n_propensity,
+  size = 1,
+  prob = true_propensity
+)
+
+propensity_tau <- 4
+
+propensity_y <- propensity_x +
+  propensity_tau * propensity_t +
+  rnorm(n_propensity)
+
+propensity_data <- data.frame(
+  x = propensity_x,
+  t = factor(propensity_t, levels = c(0, 1)),
+  y = propensity_y,
+  true_propensity = true_propensity
+)
+
+range(true_propensity)
+```
+
+```{r propensity-outcome-plot}
+propensity_line_data <- data.frame(
+  x = rep(
+    seq(-3, 3, length.out = 200),
+    2
+  ),
+  t = factor(
+    rep(c(0, 1), each = 200),
+    levels = c(0, 1)
+  )
+)
+
+propensity_line_data$mean_y <- 
+  propensity_line_data$x +
+  propensity_tau *
+    as.numeric(
+      as.character(propensity_line_data$t)
+    )
+
+ggplot(
+  propensity_data,
+  aes(x = x, y = y, color = t)
+) +
+  geom_point(alpha = 0.7) +
+  geom_line(
+    data = propensity_line_data,
+    aes(x = x, y = mean_y, color = t),
+    linewidth = 1
+  ) +
+  scale_color_manual(
+    values = c("0" = "red", "1" = "blue"),
+    labels = c("Control", "Treatment")
+  ) +
+  labs(
+    x = "Covariate X",
+    y = "Outcome Y",
+    color = "Group",
+    title = paste(
+      "Observed outcomes with probabilistic",
+      "treatment assignment"
+    )
+  )
+```
+
+## Estimate the Propensity Score
+
+In practice, the true propensity score is unknown. We estimate it by fitting a logistic regression of treatment on \(X\).
+
+```{r propensity-model}
+propensity_model <- glm(
+  propensity_t ~ propensity_x,
+  family = binomial(link = "logit")
+)
+
+estimated_propensity <- predict(
+  propensity_model,
+  type = "response"
+)
+
+summary(propensity_model)
+range(estimated_propensity)
+```
+
+```{r propensity-comparison}
+propensity_comparison <- data.frame(
+  estimated = estimated_propensity,
+  truth = true_propensity
+)
+
+ggplot(
+  propensity_comparison,
+  aes(x = estimated, y = truth)
+) +
+  geom_point(alpha = 0.7) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linetype = "dashed"
+  ) +
+  coord_equal() +
+  labs(
+    x = "Estimated propensity score",
+    y = "True propensity score",
+    title = "Estimated versus true propensity scores"
+  )
+```
+
+## Inverse Probability Weighting
+
+The Horvitz--Thompson IPW estimator is
+
+\[
+\widehat{\tau}_{\mathrm{IPW}}
+=
+\frac{1}{n}
+\sum_{i=1}^n
+\left[
+\frac{T_iY_i}{\widehat q(X_i)}
+-
+\frac{(1-T_i)Y_i}{1-\widehat q(X_i)}
+\right].
+\]
+
+```{r ipw-estimator}
+ipw_contribution <- 
+  propensity_t * propensity_y /
+    estimated_propensity -
+  (1 - propensity_t) * propensity_y /
+    (1 - estimated_propensity)
+
+ipw_ate <- mean(ipw_contribution)
+
+ipw_ate
+```
+
+A normalized Hájek version can be more stable in finite samples:
+
+```{r hajek-estimator}
+treated_mean_ipw <- 
+  sum(
+    propensity_t * propensity_y /
+      estimated_propensity
+  ) /
+  sum(
+    propensity_t / estimated_propensity
+  )
+
+control_mean_ipw <- 
+  sum(
+    (1 - propensity_t) * propensity_y /
+      (1 - estimated_propensity)
+  ) /
+  sum(
+    (1 - propensity_t) /
+      (1 - estimated_propensity)
+  )
+
+hajek_ate <- treated_mean_ipw - control_mean_ipw
+
+hajek_ate
+```
+
+# Colliders
+
+A collider is a variable caused by two other variables. In the following simulation,
+
+\[
+T \longrightarrow X \longleftarrow Y.
+\]
+
+Conditioning on \(X\) opens a noncausal association between \(T\) and \(Y\). Therefore, we should not adjust for \(X\).
+
+## Collider Example with a Positive Treatment Effect
+
+```{r collider-positive-data}
+n_collider_positive <- 500
+
+collider_positive_t <- rbinom(
+  n_collider_positive,
+  size = 1,
+  prob = 0.5
+)
+
+collider_positive_tau <- 4
+
+collider_positive_y <- 
+  collider_positive_tau * collider_positive_t +
+  rnorm(n_collider_positive)
+
+# X is a collider affected by both T and Y
+collider_positive_x <- 
+  collider_positive_t +
+  0.5 * collider_positive_y +
+  rnorm(n_collider_positive, sd = 0.2)
+```
+
+Without conditioning on the collider, the difference in means estimates the ATE.
+
+```{r collider-positive-unadjusted}
+collider_positive_unadjusted_ate <- 
+  mean(
+    collider_positive_y[
+      collider_positive_t == 1
+    ]
+  ) -
+  mean(
+    collider_positive_y[
+      collider_positive_t == 0
+    ]
+  )
+
+collider_positive_unadjusted_ate
+```
+
+Conditioning on the collider can severely bias the estimate.
+
+```{r collider-positive-adjusted}
+collider_positive_model <- lm(
+  collider_positive_y ~
+    collider_positive_t +
+    collider_positive_x
+)
+
+collider_positive_adjusted_ate <- 
+  coef(
+    collider_positive_model
+  )[["collider_positive_t"]]
+
+coef(collider_positive_model)
+summary(collider_positive_model)
+```
+
+## Collider Example with No Treatment Effect
+
+Here, the true treatment effect is zero.
+
+```{r collider-zero-data}
+n_collider_zero <- 500
+
+collider_zero_t <- rbinom(
+  n_collider_zero,
+  size = 1,
+  prob = 0.5
+)
+
+collider_zero_tau <- 0
+
+collider_zero_y <- 
+  collider_zero_tau * collider_zero_t +
+  rnorm(n_collider_zero)
+
+collider_zero_x <- 
+  collider_zero_t +
+  0.5 * collider_zero_y +
+  rnorm(n_collider_zero, sd = 0.2)
+```
+
+The unadjusted difference in means is approximately unbiased for the zero ATE.
+
+```{r collider-zero-unadjusted}
+collider_zero_unadjusted_ate <- 
+  mean(
+    collider_zero_y[collider_zero_t == 1]
+  ) -
+  mean(
+    collider_zero_y[collider_zero_t == 0]
+  )
+
+collider_zero_unadjusted_ate
+```
+
+Conditioning on the collider creates a spurious treatment association.
+
+```{r collider-zero-adjusted}
+collider_zero_model <- lm(
+  collider_zero_y ~
+    collider_zero_t +
+    collider_zero_x
+)
+
+collider_zero_adjusted_ate <- 
+  coef(collider_zero_model)[["collider_zero_t"]]
+
+coef(collider_zero_model)
+summary(collider_zero_model)
+```
+
+# Summary of Estimators
+
+```{r estimator-summary}
+results <- data.frame(
+  example = c(
+    "Randomized: difference in means",
+    "Randomized: linear regression",
+    "Confounded: unadjusted",
+    "Confounded: regression adjustment",
+    "Confounded: FWL residualization",
+    "Propensity score: Horvitz--Thompson IPW",
+    "Propensity score: Hájek IPW",
+    "Collider, positive effect: unadjusted",
+    "Collider, positive effect: adjusted",
+    "Collider, zero effect: unadjusted",
+    "Collider, zero effect: adjusted"
+  ),
+  estimate = c(
+    randomized_difference_ate,
+    randomized_regression_ate,
+    confounder_unadjusted_ate,
+    adjusted_ate,
+    fwl_ate,
+    ipw_ate,
+    hajek_ate,
+    collider_positive_unadjusted_ate,
+    collider_positive_adjusted_ate,
+    collider_zero_unadjusted_ate,
+    collider_zero_adjusted_ate
+  )
+)
+
+knitr::kable(
+  results,
+  digits = 3,
+  col.names = c(
+    "Method",
+    "Estimated treatment effect"
+  )
+)
+```
