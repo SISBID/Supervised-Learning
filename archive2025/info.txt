@@ -1,1 +1,1 @@
-
+This folder contains the mateiral from the Supervised Learning Module of SISBID 2025. Slides and codes are archived in this folder. 
