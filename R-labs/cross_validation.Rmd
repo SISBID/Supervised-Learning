@@ -1,0 +1,331 @@
+---
+title: "SISBID3: Cross Validation"
+subtitle: "R version"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5,
+  fig.align = "center"
+)
+
+set.seed(42)
+
+library(ggplot2)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+## Cross-Validation
+
+We begin by loading the `ISLR` package and examining the dimensions of the `Auto` data set.
+
+```{r}
+library(ISLR)
+ncol(Auto)
+nrow(Auto)
+```
+## Plot data
+Often times, it's good to practice to plot the data you are trying to analyze.This gives you a sense of whether there are outlier, interesting patterns, etc. These can motivate the model you end up fitting.
+
+```{r}
+set.seed(1)
+train=sample(392,196)
+plot(mpg ~ horsepower,
+     data = Auto,
+     xlab = "Horsepower",
+     ylab = "MPG",
+     main = "MPG versus Horsepower",
+     pch = 19)
+```
+
+## The Validation Set Approach
+
+We use the validation set approach to estimate the test error rates from fitting various linear models on the `Auto` data set. We first split the observations into a training set and a validation set.
+
+```{r}
+set.seed(1)
+train=sample(392,196)
+```
+
+We then fit a linear regression using only the training observations.
+
+```{r}
+lm.fit=lm(mpg~horsepower,data=Auto,subset=train)
+attach(Auto)
+```
+
+We use `predict()` to estimate the response for all 392 observations, and we calculate the mean squared error of the 196 observations in the validation set.
+
+```{r}
+mean((mpg-predict(lm.fit,Auto))[-train]^2)
+```
+
+We can use `poly()` to estimate the test error for the quadratic and cubic regressions.
+
+```{r}
+lm.fit2=lm(mpg~poly(horsepower,2),data=Auto,subset=train)
+mean((mpg-predict(lm.fit2,Auto))[-train]^2)
+lm.fit3=lm(mpg~poly(horsepower,3),data=Auto,subset=train)
+mean((mpg-predict(lm.fit3,Auto))[-train]^2)
+```
+
+If we choose a different training set instead, then we will obtain somewhat different errors on the validation set.
+
+```{r}
+set.seed(2)
+train=sample(392,196)
+lm.fit=lm(mpg~horsepower,subset=train)
+mean((mpg-predict(lm.fit,Auto))[-train]^2)
+lm.fit2=lm(mpg~poly(horsepower,2),data=Auto,subset=train)
+mean((mpg-predict(lm.fit2,Auto))[-train]^2)
+lm.fit3=lm(mpg~poly(horsepower,3),data=Auto,subset=train)
+mean((mpg-predict(lm.fit3,Auto))[-train]^2)
+```
+
+## Leave-One-Out Cross-Validation
+
+The LOOCV estimate can be automatically computed for any generalized linear model using the `glm()` and `cv.glm()` functions. We first show that `glm()` yields identical results to `lm()` when no `family` argument is passed.
+
+```{r}
+glm.fit=glm(mpg~horsepower,data=Auto)
+coef(glm.fit)
+lm.fit=lm(mpg~horsepower,data=Auto)
+coef(lm.fit)
+```
+
+We now use the `glm()` function together with `cv.glm()` from the `boot` package to perform cross-validation.
+
+```{r}
+library(boot)
+glm.fit=glm(mpg~horsepower,data=Auto)
+cv.err=cv.glm(Auto,glm.fit)
+cv.err$delta
+```
+
+We repeat this procedure for increasingly complex polynomial fits, iteratively fitting the polynomial regression for polynomials of order 1 through 5, computing the associated cross-validation error, and plotting the results.
+
+```{r}
+cv.error=rep(0,5)
+for (i in 1:5){
+ glm.fit=glm(mpg~poly(horsepower,i),data=Auto)
+ cv.error[i]=cv.glm(Auto,glm.fit)$delta[1]
+ }
+plot(cv.error)
+```
+
+## k-Fold Cross-Validation
+
+The `cv.glm()` function can also be used to implement k-fold CV. We set a seed and initialize a vector in which we will store the CV errors corresponding to the polynomial fits of orders one to ten.
+
+```{r}
+set.seed(17)
+cv.error.10=rep(0,10)
+for (i in 1:10){
+ glm.fit=glm(mpg~poly(horsepower,i),data=Auto)
+ cv.error.10[i]=cv.glm(Auto,glm.fit,K=10)$delta[1]
+ }
+plot(cv.error.10)
+```
+
+Finally, we summarize the quadratic model.
+
+```{r}
+glm.fit2=glm(mpg~poly(horsepower,2),data=Auto)
+summary(glm.fit2)
+```
+
+## Model Complexity and Variance
+
+More flexible models typically have higher variance: small changes in the training data can produce larger changes in the fitted model. To illustrate this, we fit a linear model and a tenth-degree polynomial using two different training sets.
+
+We first standardize horsepower to improve the numerical stability of the polynomial regression.
+
+```{r}
+horsepower.mean = mean(Auto$horsepower)
+horsepower.sd = sd(Auto$horsepower)
+
+Auto$horsepower.std =
+  (Auto$horsepower - horsepower.mean) / horsepower.sd
+```
+
+We construct two training sets, each containing half of the observations.
+
+```{r}
+set.seed(1)
+train.1 = sample(seq_len(nrow(Auto)), nrow(Auto) / 2)
+
+set.seed(2)
+train.2 = sample(seq_len(nrow(Auto)), nrow(Auto) / 2)
+```
+
+We fit a linear regression and a tenth-degree polynomial regression to each training set.
+
+```{r}
+linear.fit.1 = lm(
+  mpg ~ horsepower.std,
+  data = Auto,
+  subset = train.1
+)
+
+linear.fit.2 = lm(
+  mpg ~ horsepower.std,
+  data = Auto,
+  subset = train.2
+)
+
+poly.fit.1 = lm(
+  mpg ~ poly(horsepower.std, 10, raw = TRUE),
+  data = Auto,
+  subset = train.1
+)
+
+poly.fit.2 = lm(
+  mpg ~ poly(horsepower.std, 10, raw = TRUE),
+  data = Auto,
+  subset = train.2
+)
+```
+
+We first compare the coefficients of the two linear models.
+
+```{r}
+linear.coefs = data.frame(
+  term = c("Intercept", "Horsepower"),
+  training_set_1 = coef(linear.fit.1),
+  training_set_2 = coef(linear.fit.2)
+)
+
+linear.coefs$absolute_difference =
+  abs(linear.coefs$training_set_1 -
+        linear.coefs$training_set_2)
+
+knitr::kable(
+  linear.coefs,
+  digits = 3,
+  row.names = FALSE
+)
+```
+
+We can similarly compare the coefficients of the tenth-degree polynomial models.
+
+```{r}
+poly.coefs = data.frame(
+  term = c("Intercept", paste0("Degree ", 1:10)),
+  training_set_1 = coef(poly.fit.1),
+  training_set_2 = coef(poly.fit.2)
+)
+
+poly.coefs$absolute_difference =
+  abs(poly.coefs$training_set_1 -
+        poly.coefs$training_set_2)
+
+knitr::kable(
+  poly.coefs,
+  digits = 3,
+  row.names = FALSE
+)
+```
+
+Because polynomial coefficients can be difficult to interpret directly, we also compare the fitted regression curves.
+
+```{r}
+horsepower.grid = seq(
+  min(Auto$horsepower),
+  max(Auto$horsepower),
+  length.out = 300
+)
+
+prediction.grid = data.frame(
+  horsepower.std =
+    (horsepower.grid - horsepower.mean) / horsepower.sd
+)
+
+prediction.curves = rbind(
+  data.frame(
+    horsepower = horsepower.grid,
+    predicted_mpg = predict(linear.fit.1, prediction.grid),
+    model = "Linear model",
+    training_set = "Training set 1"
+  ),
+  data.frame(
+    horsepower = horsepower.grid,
+    predicted_mpg = predict(linear.fit.2, prediction.grid),
+    model = "Linear model",
+    training_set = "Training set 2"
+  ),
+  data.frame(
+    horsepower = horsepower.grid,
+    predicted_mpg = predict(poly.fit.1, prediction.grid),
+    model = "Degree-10 polynomial",
+    training_set = "Training set 1"
+  ),
+  data.frame(
+    horsepower = horsepower.grid,
+    predicted_mpg = predict(poly.fit.2, prediction.grid),
+    model = "Degree-10 polynomial",
+    training_set = "Training set 2"
+  )
+)
+```
+
+```{r}
+ggplot(Auto, aes(x = horsepower, y = mpg)) +
+  geom_point(alpha = 0.35) +
+  geom_line(
+    data = prediction.curves,
+    aes(
+      x = horsepower,
+      y = predicted_mpg,
+      linetype = training_set
+    ),
+    linewidth = 1,
+    inherit.aes = FALSE
+  ) +
+  facet_wrap(~ model) +
+  labs(
+    title = "Sensitivity to the Choice of Training Data",
+    x = "Horsepower",
+    y = "Predicted MPG",
+    linetype = NULL
+  )
+```
+
+Finally, we calculate the root mean squared difference between the fitted curves.
+
+```{r}
+linear.pred.1 = predict(linear.fit.1, prediction.grid)
+linear.pred.2 = predict(linear.fit.2, prediction.grid)
+
+poly.pred.1 = predict(poly.fit.1, prediction.grid)
+poly.pred.2 = predict(poly.fit.2, prediction.grid)
+
+fit.variability = data.frame(
+  model = c(
+    "Linear model",
+    "Degree-10 polynomial"
+  ),
+  RMSE_between_fitted_curves = c(
+    sqrt(mean((linear.pred.1 - linear.pred.2)^2)),
+    sqrt(mean((poly.pred.1 - poly.pred.2)^2))
+  )
+)
+
+knitr::kable(
+  fit.variability,
+  digits = 3,
+  row.names = FALSE
+)
+```
+
+The tenth-degree polynomial generally changes more substantially across the two training sets. This illustrates the higher variance of flexible models: their fitted predictions are more sensitive to which observations are included in the training data.

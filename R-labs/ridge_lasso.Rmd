@@ -1,0 +1,187 @@
+---
+title: "SISBID3: Ridge and Lasso"
+subtitle: "R version"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5,
+  fig.align = "center"
+)
+
+set.seed(42)
+
+library(ggplot2)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+## Looking at the Data and Removing Missing Values
+
+We perform ridge regression and the lasso on the `Hitters` data set. We first note that some values are missing for the response, `Salary`, and use the `na.omit()` function to remove these rows.
+
+```{r}
+library(ISLR)
+View(Hitters)
+names(Hitters)
+dim(Hitters)
+sum(is.na(Hitters$Salary))
+Hitters=na.omit(Hitters)
+dim(Hitters)
+sum(is.na(Hitters))
+```
+
+We will use the `glmnet` package to perform ridge regression and the lasso. This package requires us to pass in an `x` matrix as well as a `y` vector, and does not use the `y~x` syntax.
+
+```{r}
+x=model.matrix(Salary~.,Hitters)[,-1]
+y=Hitters$Salary
+```
+
+## Ridge Regression
+
+The `glmnet()` function has an `alpha` argument that determines what type of model is fit; `alpha=0` corresponds to ridge regression. We fit a ridge regression model over a grid of lambda values ranging from `10^10` to `10^-2`.
+
+```{r}
+library(glmnet)
+grid=10^seq(10,-2,length=100)
+ridge.mod=glmnet(x,y,alpha=0,lambda=grid)
+```
+
+By default, `glmnet()` standardizes the variables. Associated with each value of lambda is a vector of ridge regression coefficients, stored in a matrix that can be accessed by `coef()`.
+
+```{r}
+dim(coef(ridge.mod))
+```
+
+We expect the coefficient estimates to be much smaller, in terms of L2 norm, when a large value of lambda is used, as compared to when a small value of lambda is used. These are the coefficients when lambda is 11,498, along with their L2 norm.
+
+```{r}
+ridge.mod$lambda[50]
+coef(ridge.mod)[,50]
+sqrt(sum(coef(ridge.mod)[-1,50]^2))
+```
+
+In contrast, here are the coefficients when lambda is 705, along with their L2 norm. Note the much larger L2 norm of the coefficients associated with this smaller value of lambda.
+
+```{r}
+ridge.mod$lambda[60]
+coef(ridge.mod)[,60]
+sqrt(sum(coef(ridge.mod)[-1,60]^2))
+```
+
+We can use the `predict()` function to obtain the ridge regression coefficients for a new value of lambda, say 50.
+
+```{r}
+predict(ridge.mod,s=50,type="coefficients")[1:20,]
+```
+
+We now split the samples into a training set and a test set in order to estimate the test error of ridge regression and the lasso.
+
+```{r}
+set.seed(1)
+train=sample(1:nrow(x), nrow(x)/2)
+test=(-train)
+y.test=y[test]
+```
+
+Next we fit a ridge regression model on the training set, and evaluate its MSE on the test set, using lambda = 4.
+
+```{r}
+ridge.mod=glmnet(x[train,],y[train],alpha=0,lambda=grid, thresh=1e-12)
+ridge.pred=predict(ridge.mod,s=4,newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+For comparison, we also compute the test MSE if we had simply fit a model with just an intercept, predicting each test observation using the mean of the training observations.
+
+```{r}
+mean((mean(y[train])-y.test)^2)
+```
+
+We could also get the same result by fitting a ridge regression model with a very large value of lambda.
+
+```{r}
+ridge.pred=predict(ridge.mod,s=1e10,newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+So fitting a ridge regression model with lambda = 4 leads to a much lower test MSE than fitting a model with just an intercept. We now check whether there is any benefit to performing ridge regression with lambda = 4 instead of just performing least squares regression, which corresponds to lambda = 0.
+
+```{r}
+ridge.pred=predict(ridge.mod,s=0,newx=x[test,],exact=T,x=x[train,],y=y[train])
+mean((ridge.pred-y.test)^2)
+lm(y~x, subset=train)
+predict(ridge.mod,s=0,exact=T,type="coefficients",x=x[train,],y=y[train])[1:20,]
+```
+
+## Systematically Choosing Lambda Using CV
+
+In general, instead of arbitrarily choosing lambda = 4, it would be better to use cross-validation to choose the tuning parameter. We can do this using the built-in cross-validation function, `cv.glmnet()`.
+
+```{r}
+set.seed(1)
+cv.out=cv.glmnet(x[train,],y[train],alpha=0)
+plot(cv.out)
+bestlam=cv.out$lambda.min
+bestlam
+```
+
+We now compute the test MSE associated with this value of lambda.
+
+```{r}
+ridge.pred=predict(ridge.mod,s=bestlam,newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+Finally, we refit our ridge regression model on the full data set, using the value of lambda chosen by cross-validation, and examine the coefficient estimates.
+
+```{r}
+ridge.out=glmnet(x,y,alpha=0)
+ridge.coef=predict(ridge.out,type="coefficients",s=bestlam)[1:20,]
+```
+
+## The Lasso
+
+We saw that ridge regression with a wise choice of lambda can outperform least squares as well as the null model on the `Hitters` data set. We now ask whether the lasso can yield either a more accurate or a more interpretable model than ridge regression. We fit a lasso model, setting `alpha=1`.
+
+```{r}
+lasso.mod=glmnet(x[train,],y[train],alpha=1,lambda=grid)
+plot(lasso.mod)
+```
+
+We now perform cross-validation and compute the associated test error.
+
+```{r}
+set.seed(1)
+cv.out=cv.glmnet(x[train,],y[train],alpha=1)
+plot(cv.out)
+bestlam=cv.out$lambda.min
+lasso.pred=predict(lasso.mod,s=bestlam,newx=x[test,])
+mean((lasso.pred-y.test)^2)
+```
+
+This is substantially lower than the test set MSE of the null model and of least squares, and very similar to the test MSE of ridge regression with lambda chosen by cross-validation. However, the lasso has a substantial advantage over ridge regression in that the resulting coefficient estimates are sparse.
+
+```{r}
+lasso.out=glmnet(x,y,alpha=1,lambda=grid)
+lasso.coef=predict(lasso.out,type="coefficients",s=bestlam)[1:20,]
+lasso.coef
+lasso.coef[lasso.coef!=0]
+```
+
+## Compare the Coefficients from Ridge and Lasso
+
+```{r}
+plot(ridge.coef, lasso.coef)
+```

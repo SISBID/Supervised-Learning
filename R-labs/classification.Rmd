@@ -1,0 +1,328 @@
+---
+title: "SISBID3: Classification"
+subtitle: "R version"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5,
+  fig.align = "center"
+)
+
+set.seed(42)
+
+library(ggplot2)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+
+## The Stock Market Data
+
+We load the packages needed for this lab and explore the `Smarket` data set and visualize the correlations among variables. Note that if you try `cor(Smarket)` you will get an error stating `Error in cor(Smarket) : 'x' must be numeric`. This is because `Direction` is a *categorical* variable, hence, not *numeric*. So, below, we remove this variable before looking at correlations. 
+
+```{r}
+library(ISLR)
+library(MASS)
+library(glmnet)
+library(class)
+library(e1071)
+library(ROCR)
+
+names(Smarket)
+dim(Smarket)
+summary(Smarket)
+pairs(Smarket)
+cor(Smarket[,-9])
+attach(Smarket)
+plot(Volume)
+```
+
+## Logistic Regression
+
+We fit a logistic regression model to predict `Direction` using the five lag variables and `Volume`.
+
+```{r}
+glm.fit=glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume,data=Smarket,family=binomial)
+summary(glm.fit)
+coef(glm.fit)
+summary(glm.fit)$coef
+```
+
+We compute predicted probabilities, convert them into class labels, and produce a confusion matrix along with the overall accuracy.
+
+```{r}
+glm.probs=predict(glm.fit,type="response")
+glm.probs[1:10]
+contrasts(Direction)
+glm.pred=rep("Down",1250)
+glm.pred[glm.probs>.5]="Up"
+table(glm.pred,Direction)
+(507+145)/1250
+mean(glm.pred==Direction)
+```
+
+## Separate the Data into Training and Test
+
+Next, we create a training set consisting of observations before 2005, and a test set (`Smarket.2005`) consisting of the 2005 observations, then refit the logistic regression on the training set only. This type of data split is especially suitable for *time series* data, i.e., data observed over time, as simple cross validation (or split-sample validation) does not make much sense in this context. 
+
+```{r}
+train=(Year<2005)
+Smarket.2005=Smarket[!train,]
+dim(Smarket.2005)
+Direction.2005=Direction[!train]
+glm.fit=glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume,data=Smarket,family=binomial,subset=train)
+glm.probs=predict(glm.fit,Smarket.2005,type="response")
+glm.pred=rep("Down",252)
+glm.pred[glm.probs>.5]="Up"
+table(glm.pred,Direction.2005)
+mean(glm.pred==Direction.2005)
+mean(glm.pred!=Direction.2005)
+```
+
+We refit using only `Lag1` and `Lag2`, the variables that seemed to have the most predictive power, and evaluate on the test set. We also predict the probability of a market increase for two hypothetical days.
+
+```{r}
+glm.fit=glm(Direction~Lag1+Lag2,data=Smarket,family=binomial,subset=train)
+glm.probs=predict(glm.fit,Smarket.2005,type="response")
+glm.pred=rep("Down",252)
+glm.pred[glm.probs>.5]="Up"
+table(glm.pred,Direction.2005)
+mean(glm.pred==Direction.2005)
+106/(106+76)
+predict(glm.fit,newdata=data.frame(Lag1=c(1.2,1.5),Lag2=c(1.1,-0.8)),type="response")
+```
+
+## Penalized Logistic Regression
+
+We set up the predictor matrix and response vector for use with `glmnet`.
+
+```{r}
+x = as.matrix(Smarket[1:1250, c(2:7)])
+y = as.factor(Smarket[1:1250, 9])
+```
+
+### Ridge
+
+We fit a ridge-penalized logistic regression over a grid of lambda values, use cross-validation to select lambda, and evaluate the resulting model on the test set.
+
+```{r}
+glm.ridge=glmnet(x[train,],y[train],family="binomial",alpha=0,lambda=exp(seq(-5,10,0.01)))
+plot(glm.ridge,col=c(1:8), xvar="lambda")
+legend('bottomright',colnames(x),lty=1,col=c(1:8),bty='n')
+cv.ridge=cv.glmnet(x[train,],y[train],family="binomial",alpha=0,lambda=exp(seq(-50,2,0.1)))
+plot(cv.ridge)
+lambda.min=cv.ridge$lambda.min
+ridge.probs=predict(glm.ridge,s=lambda.min,type="response",newx=x[!train,])
+ridge.pred=rep("Down",252)
+ridge.pred[ridge.probs>.5]="Up"
+table(ridge.pred,Direction.2005)
+mean(ridge.pred==Direction.2005)
+```
+
+### Lasso
+
+We repeat the process using a lasso penalty instead. Note that we only need to change `alpha=0` in ridge to `alpha=1`. Everything else is the same. 
+
+```{r}
+glm.lasso=glmnet(x[train,],y[train],family="binomial",alpha=1)
+plot(glm.lasso,col=c(1:8))
+legend('bottomleft',colnames(x),lty=1,col=c(1:8),bty='n')
+cv.lasso=cv.glmnet(x[train,],y[train],family="binomial",alpha=1)
+plot(cv.lasso)
+lambda.min=cv.lasso$lambda.min
+lasso.probs=predict(glm.lasso,s=lambda.min,type="response",newx=x[!train,])
+lasso.pred=rep("Down",252)
+lasso.pred[lasso.probs>.5]="Up"
+table(lasso.pred,Direction.2005)
+mean(lasso.pred==Direction.2005)
+predict(glm.lasso,s=lambda.min,type="coefficients",newx=x[!train,])
+```
+
+### Other Choices of Lambda
+
+One nice feature of the `glmnet` package is that it gives you a range of models, so you don't have to refit the model every time you want to try a different tuning parameter `lambda` -- you simply use the predict function and get the results for that value of `lambda`.
+
+```{r}
+plot(glm.lasso,col=c(1:8),xvar="lambda")
+lasso.probs=predict(glm.lasso,s=exp(-5),type="response",newx=x[!train,])
+lasso.pred=rep("Down",252)
+lasso.pred[lasso.probs>.5]="Up"
+table(lasso.pred,Direction.2005)
+mean(lasso.pred==Direction.2005)
+```
+
+## K-Nearest Neighbors
+
+Instead of the parametric approach used in logistic regression, we can use a fully nonparametric classification model based on K-nearest neighbors (KNN). In R, we can do this by using the `knn()` function. 
+
+Given its nonparametric nature, KNN cannot be fit with a large number of covariates, and is only applicable to small number of covariates, so here we use `Lag1` and `Lag2` and try different values of neighborhood size, `k`.
+
+```{r}
+library(class)
+train.X=cbind(Lag1,Lag2)[train,]
+test.X=cbind(Lag1,Lag2)[!train,]
+train.Direction=Direction[train]
+set.seed(1)
+knn.pred=knn(train.X,test.X,train.Direction,k=1)
+table(knn.pred,Direction.2005)
+(83+43)/252
+knn.pred=knn(train.X,test.X,train.Direction,k=3)
+table(knn.pred,Direction.2005)
+mean(knn.pred==Direction.2005)
+```
+
+## Another Example: Classification with the Heart Data
+
+We load the `Heart` data set, available on GitHub, and explore it.
+
+*Note: `Heart.rda` must be present in the working directory when knitting.*
+
+```{r}
+load("Heart.rda")
+attach(Heart)
+
+names(Heart)
+dim(Heart)
+summary(Heart)
+plot(trestbps)
+```
+
+## Separate the Data into Training and Test
+
+```{r}
+set.seed(1)
+train=sample(1:nrow(Heart), 197)
+trndat=Heart[train,]
+tstdat=Heart[-train,]
+dim(trndat)
+dim(tstdat)
+```
+
+## Logistic Regression
+
+We fit a logistic regression model to predict heart disease (`HD`) using all predictors, and evaluate it on the test set.
+
+```{r}
+HD.tst=HD[-train]
+glm.fit=glm(HD~.,data=Heart,family=binomial,subset=train)
+glm.probs=predict(glm.fit,tstdat,type="response")
+glm.pred=numeric(100)
+glm.pred[glm.probs>.5]=1
+table(glm.pred,HD.tst)
+mean(glm.pred==HD.tst)
+```
+
+## Penalized Logistic Regression
+
+```{r}
+n=nrow(Heart)
+x=as.matrix(Heart[1:n,1:13])
+y=as.factor(Heart[1:n,14])
+```
+
+### Ridge 
+
+```{r}
+glm.ridge=glmnet(x[train,],y[train],family="binomial",alpha=0)
+plot(glm.ridge,col=c(1:8), xvar="lambda")
+legend('topright',colnames(x),lty=1,col=c(1:8),bty='n')
+cv.ridge=cv.glmnet(x[train,],y[train],family="binomial",alpha=0)
+plot(cv.ridge)
+lambda.min=cv.ridge$lambda.min
+ridge.probs=predict(glm.ridge,s=lambda.min,type="response",newx=x[-train,])
+ridge.pred=rep(0,100)
+ridge.pred[ridge.probs>.5]=1
+table(ridge.pred,HD.tst)
+mean(ridge.pred==HD.tst)
+```
+
+### Lasso
+
+```{r}
+glm.lasso=glmnet(x[train,],y[train],family="binomial",alpha=1)
+plot(glm.lasso,col=c(1:8), xvar="lambda")
+legend('bottomright',colnames(x),lty=1,col=c(1:8),bty='n')
+cv.lasso=cv.glmnet(x[train,],y[train],family="binomial",alpha=1)
+plot(cv.lasso)
+lambda.min=cv.lasso$lambda.min
+lasso.probs=predict(glm.lasso,s=lambda.min,type="response",newx=x[-train,])
+lasso.pred=rep(0,100)
+lasso.pred[ridge.probs>.5]=1
+table(lasso.pred,HD.tst)
+mean(lasso.pred==HD.tst)
+```
+
+## K-Nearest Neighbors
+
+```{r}
+library(class)
+train.X=cbind(ca,thal)[train,1:2]
+test.X=cbind(ca,thal)[-train,1:2]
+HD.trn=HD[train]
+set.seed(1)
+knn.pred=knn(train.X,test.X,as.factor(HD.trn),k=1)
+table(knn.pred,HD.tst)
+mean(knn.pred==HD.tst)
+knn.pred=knn(train.X,test.X,HD.trn,k=10)
+table(knn.pred,HD.tst)
+mean(knn.pred==HD.tst)
+```
+
+## SVM
+
+We fit a support vector machine with a radial kernel to the Heart data, then use `tune.svm()` to select the cost and gamma parameters via cross-validation.
+
+```{r}
+dat=Heart
+dat$HD=as.factor(HD)
+svmfit=svm(HD~.,data=dat[train,],kernel="radial",gamma=1,cost=1)
+svm.pred=predict(svmfit,newdata=dat[-train,-14])
+table(true=dat[-train,14], pred=svm.pred)
+mean(dat[-train,14]==svm.pred)
+
+set.seed(1)
+tune.out=tune.svm(x=dat[train,-14],y=dat[train,14],kernel="radial",
+                  cost=c(0.1,1,10,100,1000),gamma=c(0.5,1,2,3,4))
+summary(tune.out)
+svmfit=svm(HD~.,data=dat[train,],kernel="radial",gamma=tune.out$best.parameters$gamma,cost=tune.out$best.parameters$cost)
+svm.pred=predict(svmfit,newdata=dat[-train,-14])
+table(true=dat[-train,14], pred=svm.pred)
+mean(dat[-train,14]==svm.pred)
+```
+
+## ROC Curves
+
+We define a helper function to plot ROC curves from fitted decision values, and compare an "optimal" versus a more flexible SVM fit on the training and test data.
+
+*Note: this section references a `y` column and `svmfit.opt`/`svmfit.flex` objects that are not defined elsewhere in this script for the `Heart`/`dat` data (`dat` has no `y` column, only `HD`). This looks like it may have been carried over from a different example and will likely error as written; you may want to adapt the formula (`HD~.`) and variable name (`HD` instead of `y`) to match this data set.*
+
+```{r}
+rocplot=function(pred, truth, ...){
+  predob = prediction(pred, truth)
+  perf = performance(predob, "tpr", "fpr")
+  plot(perf,...)}
+
+svmfit.opt=svm(HD~., data=dat[train,], kernel="radial", gamma=2, cost=1, decision.values=T)
+fitted=attributes(predict(svmfit.opt,dat[train,],decision.values=TRUE))$decision.values
+par(mfrow=c(1,2))
+rocplot(fitted,dat[train,"HD"],main="Training Data")
+svmfit.flex=svm(HD~., data=dat[train,], kernel="radial",gamma=50, cost=1, decision.values=T)
+fitted=attributes(predict(svmfit.flex,dat[train,],decision.values=T))$decision.values
+rocplot(fitted,dat[train,"HD"],add=T,col="red")
+legend('bottomright',c('optimal model','flexible model'),lty=1,col=c(1,2),bty='n')
+fitted=attributes(predict(svmfit.opt,dat[-train,],decision.values=T))$decision.values
+rocplot(fitted,dat[-train,"HD"],main="Test Data")
+fitted=attributes(predict(svmfit.flex,dat[-train,],decision.values=T))$decision.values
+rocplot(fitted,dat[-train,"HD"],add=T,col="red")
+```
