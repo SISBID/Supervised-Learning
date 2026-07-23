@@ -16,7 +16,7 @@ Please watch the abvoe videos (related to the first set of slides, SISBID1.pdf) 
 
 Here are the videos from live lectures, which will be available after the end of each lecture (password required): 
 
-1. Day 1 (Wednesday July 20th, 11:30am-2:30pm PT): [Introduction+Regression](tobeadded)
+1. Day 1 (Wednesday July 20th, 11:30am-2:30pm PT): [Introduction+Regression](https://washington.zoom.us/rec/share/UcKWtqi0lDEZ9LsZyCX0UnRCdj2BG_dPs4LUddVqDiFngpGw_hj_9E_a6IQy5kDI.T8g7i73jsJvtQIpZ)
 
 2. Day 2 (Thursday July 21st, 8am-2:30pm PT): [Classification+Tree-Based Methods](tobeadded)
 
