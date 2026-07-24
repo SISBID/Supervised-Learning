@@ -18,6 +18,6 @@ Here are the videos from live lectures, which will be available after the end of
 
 1. Day 1 (Wednesday July 20th, 11:30am-2:30pm PT): [Introduction+Regression](https://washington.zoom.us/rec/share/UcKWtqi0lDEZ9LsZyCX0UnRCdj2BG_dPs4LUddVqDiFngpGw_hj_9E_a6IQy5kDI.T8g7i73jsJvtQIpZ)
 
-2. Day 2 (Thursday July 21st, 8am-2:30pm PT): [Regression+Classification](https://washington.zoom.us/rec/share/6vjrBQkLeRyGIpXjicr28IROQ2gCFadmJUXLYKsgvstcOT5wE5ToMJJU-BRo_dRg.bGoDc6nTTVuxGcAR)
+2. Day 2 (Thursday July 21st, 8am-2:30pm PT): [High-Dimensional Regression & Classification](https://washington.zoom.us/rec/share/6vjrBQkLeRyGIpXjicr28IROQ2gCFadmJUXLYKsgvstcOT5wE5ToMJJU-BRo_dRg.bGoDc6nTTVuxGcAR)
 
 3. Day 3 (Friday July 22nd, 8am-11:30am PT): [Tree-based Methods+Causal Inference with ML](tobeadded)
