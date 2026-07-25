@@ -20,4 +20,4 @@ Here are the videos from live lectures, which will be available after the end of
 
 2. Day 2 (Thursday July 21st, 8am-2:30pm PT): [High-Dimensional Regression & Classification](https://washington.zoom.us/rec/share/6vjrBQkLeRyGIpXjicr28IROQ2gCFadmJUXLYKsgvstcOT5wE5ToMJJU-BRo_dRg.bGoDc6nTTVuxGcAR)
 
-3. Day 3 (Friday July 22nd, 8am-11:30am PT): [Tree-based Methods+Causal Inference with ML](tobeadded)
+3. Day 3 (Friday July 22nd, 8am-11:30am PT): [Tree-based Methods+Causal Inference with ML](https://washington.zoom.us/rec/share/CYcznxslY75lWUlCxpZOTyqwbn35uvImnG2Xi2iU217cbugZ0U19DA-kEWzbYqWP.TBvMqTPX01cp3jDA)
